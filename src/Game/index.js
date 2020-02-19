@@ -9,43 +9,57 @@ const knightXMoveSize = 1;
 const knightYMoveSize = 2;
 const turnsQueue = [computer, user];
 
-const getCellDirections = ({x: newX ,y: newY} ,{x: knightX ,y: knightY}) => 
-    [knightX - newX, knightY - newY]
-
-const isMoveValid = (newCell, knightManCell) =>
-    validMoves.includes(getCellDirections(newCell, knightManCell));
-
-const moveKnight = (knight, newCell) => {
-    knight.cell = newCell.coordinate;
-};
-
-const isGameOver = ({x: knightX, y: knightY}, board) =>
-    validMoves.map(([x,y])=> [knightX + x, knightY + y])
-    .every(([x, y]) => board.cells[x]?[y]?.isHit);
-
-const getTurn = () => {
-    const currentTurn = turnsQueue.pop();
-    turnsQueue.unshift(currentTurn);
-
-    return currentTurn;
-};
-
-const getSlice = ({x,y}) => ({
-    sliceX: x - x % sliceWidth,
-    sliceY: y - y % sliceHeight
+const createBoard = (width = 8, height = 8) => ({
+    cells : _.range(width).map(x => _.range(height).map(y => 
+        ({x, y, isHit: false})
+    ))
 });
 
-const calculateBestMove = ({x, y}) => {
-    const {sliceX, sliceY} = getSlice({x, y});
+export const createNewGame = () => {
+    const board = createBoard();
 
-    const newX = x + knightXMoveSize >= sliceX + sliceWidth ? x - knightXMoveSize : x + knightXMoveSize;
-    const newY = y + knightYMoveSize >= sliceY + sliceHeight ? y - knightYMoveSize : y + knightYMoveSize;
+    const getCellDirections = ({x: newX ,y: newY} ,{x: knightX ,y: knightY}) => 
+        [knightX - newX, knightY - newY]
 
-    return {newX, newY};
-};
+    const isMoveValid = (knight, newCell) =>
+        validMoves.includes(getCellDirections(newCell, knight));
 
-const moveComputer = (knight, board) => {
-    moveKnight(calculateBestMove());
+    const moveKnight = (knight, newCell) => {
+        knight = newCell;
+        board[newCell.x][newCell.y].isHit = true;
+    }
+
+    const playTurn = (knight, newCell) => {
+        if (isMoveValid(knight, newCell)) {
+            moveKnight(knight, newCell);
+        }
+
+        return calculateBestMove(knight);
+    };
+
+    const isGameOver = ({x: knightX, y: knightY}) =>
+        validMoves.map(([x,y])=> [knightX + x, knightY + y])
+        .every(([x, y]) => board.cells[x]?[y]?.isHit);
+
+    const getSlice = ({x,y}) => ({
+        sliceX: x - x % sliceWidth,
+        sliceY: y - y % sliceHeight
+    });
+
+    const calculateBestMove = ({x, y}) => {
+        const {sliceX, sliceY} = getSlice({x, y});
+
+        const newX = x + knightXMoveSize >= sliceX + sliceWidth ? x - knightXMoveSize : x + knightXMoveSize;
+        const newY = y + knightYMoveSize >= sliceY + sliceHeight ? y - knightYMoveSize : y + knightYMoveSize;
+
+        return {x: newX, y: newY};
+    };
+
+    return {
+        board,
+        playTurn,
+        isGameOver
+    }
 };
 
 // const getSlicedBoard = board => {
@@ -55,4 +69,11 @@ const moveComputer = (knight, board) => {
 //     return  _.range(width).map(x => _.range(height).map(y => 
 //         ({x: x * sliceWidth, y: y * sliceHeight})
 //     ));
+// };
+
+// const getTurn = () => {
+//     const currentTurn = turnsQueue.pop();
+//     turnsQueue.unshift(currentTurn);
+
+//     return currentTurn;
 // };
