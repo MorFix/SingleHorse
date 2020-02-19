@@ -1,0 +1,24 @@
+.Cell {
+    width: 80px;
+    height: 80px;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.fullHeight {
+    height: 100%;
+}
+
+.grey {
+    background-color: beige ;
+}
+
+.greyer {
+    background-color: grey;
+}
+
+.stepped {
+    background-color: palevioletred;
+}
