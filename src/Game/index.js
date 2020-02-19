@@ -1,13 +1,11 @@
 import _ from 'lodash';
 
-import {validMoves} from './moves';
-import {computer, user} from './turns';
+import validMoves from './moves';
 
 const sliceHeight = 4;
 const sliceWidth = 2;
 const knightXMoveSize = 1;
 const knightYMoveSize = 2;
-const turnsQueue = [computer, user];
 
 const createBoard = (width = 8, height = 8) => ({
     cells : _.range(width).map(x => _.range(height).map(y => 
@@ -15,7 +13,7 @@ const createBoard = (width = 8, height = 8) => ({
     ))
 });
 
-export const createNewGame = () => {
+export default () => {
     const board = createBoard();
 
     const getCellDirections = ({x: newX ,y: newY} ,{x: knightX ,y: knightY}) => 
@@ -39,7 +37,7 @@ export const createNewGame = () => {
 
     const isGameOver = ({x: knightX, y: knightY}) =>
         validMoves.map(([x,y])=> [knightX + x, knightY + y])
-        .every(([x, y]) => board.cells[x]?[y]?.isHit);
+        .every(([x, y]) => board.cells[x][y].isHit);
 
     const getSlice = ({x,y}) => ({
         sliceX: x - x % sliceWidth,
@@ -58,7 +56,8 @@ export const createNewGame = () => {
     return {
         board,
         playTurn,
-        isGameOver
+        isGameOver,
+        isMoveValid
     }
 };
 

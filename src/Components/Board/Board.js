@@ -1,35 +1,39 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Grid} from '@material-ui/core';
 
 import {Row} from './Row/Row';
 import {Cell} from './Row/Cell/Cell';
 
-class BoardCell {
-    constructor(knight = null) {
-        this.knight = knight;
-    }
-}
-class BoardKnight {}
+import createGame from '../../Game';
 
-const mockBoard = [
-    [new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell()],
-    [new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell()],
-    [new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell()],
-    [new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell()],
-    [new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(new BoardKnight()), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell()],
-    [new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell()],
-    [new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell()],
-    [new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell(), new BoardCell()]
-]
+const initialGame = createGame();
 
 export const Board = () => {
-    const getCells = (row, rowIndex) => row.map((cell, i) =>
-        <Cell classes={i % 2 === rowIndex % 2 ? 'grey' : 'greyer'} enabled={true} item={cell.knight}></Cell>)
+    const [game, setGame] = useState(initialGame);
+    const [knightPlace, setKnightPlace] = useState({x: 0, y:0})
+
+    const moveKnight = ({x, y}) => {
+        if (!game.isMoveValid({x, y})) {
+            return;
+        }
+
+        const newKnightPosition = game.playTurn();
+        setKnightPlace({x, y});
+
+        setTimeout(() => setKnightPlace({x: newKnightPosition.x, y: newKnightPosition.y}), 1000)
+    };
+
+    const getCells = (row, rowIndex) => row.map((cell, cellIndex) => {
+        const isEnabled = game.isMoveValid({x: knightPlace.x, y: knightPlace.y}, {x: rowIndex, y: cellIndex});
+        const item = knightPlace.x === rowIndex && knightPlace.y === cellIndex ? {} : null;
+
+        return <Cell onClick={moveKnight} classes={cellIndex % 2 === rowIndex % 2 ? 'grey' : 'greyer'} enabled={isEnabled} item={item}></Cell>;
+    });
 
     return (
         <div>
-            {mockBoard.map((row, rowIndex) =>
-            <Grid container direction="column" justify="center" alignItems="center">
+            {game.board.cells.map((row, rowIndex) =>
+            <Grid container direction="column-reverse" justify="center" alignItems="center">
                 <Row>
                     {getCells(row, rowIndex)}
                 </Row>
