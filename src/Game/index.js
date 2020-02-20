@@ -17,24 +17,24 @@ export default () => {
     const board = createBoard();
 
     const getCellDirections = ({x: newX ,y: newY} ,{x: knightX ,y: knightY}) => 
-        [knightX - newX, knightY - newY]
+        [knightX - newX, knightY - newY];
 
-    const isMoveValid = (knight, newCell) =>{
+    const isMoveValid = (knight, {x, y}) =>{
         if (!knight) {
             return true;
         }
 
-        const [newX, newY] = getCellDirections(newCell, knight);
+        const [newXDirection, newYDirection] = getCellDirections({x, y}, knight);
 
-        return validMoves.some(([x, y]) => x === newX && y === newY) &&
-            board.cells[newX] &&
-            board.cells[newX][newY] &&
-            !board.cells[newX][newY].isHit;
-    }
+        return validMoves.some(([x, y]) => x === newXDirection && y === newYDirection) &&
+            board.cells[x] &&
+            board.cells[x][y] &&
+            !board.cells[x][y].isHit;
+    };
 
-    const markHit = newCell => {
-        board.cells[newCell.x][newCell.y].isHit = true;
-    }
+    const markAsHit = ({x, y}) => {
+        board.cells[x][y].isHit = true;
+    };
 
     const playTurn = (knight, newCell) => {
         if (!isMoveValid(knight, newCell)) {
@@ -42,7 +42,7 @@ export default () => {
         }
 
         return calculateBestMove(newCell);
-    }
+    };
 
     const isGameOver = ({x: knightX, y: knightY}) =>
         validMoves.map(([x,y])=> [knightX + x, knightY + y])
@@ -67,7 +67,7 @@ export default () => {
         playTurn,
         isGameOver,
         isMoveValid,
-        markHit
+        markAsHit
     }
 };
 

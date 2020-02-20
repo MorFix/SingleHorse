@@ -14,6 +14,9 @@ export const Board = ({children, board, onCellClick, isCellClickable, isContentI
         return <div onClick={() => onCellClick({x, y})} key={`[${x}][${y}]`}>
                 <Cell classes={cellClasses.join(' ')} enabled={isCellClickable({x, y})}>
                     {isContentInCell({x, y}) ? children: ''}
+                    <p>
+                        {`[${x}][${y}]`}
+                    </p>
                 </Cell>
             </div>;
     };
