@@ -19,8 +19,11 @@ export default () => {
     const getCellDirections = ({x: newX ,y: newY} ,{x: knightX ,y: knightY}) => 
         [knightX - newX, knightY - newY]
 
-    const isMoveValid = (knight, newCell) =>
-        validMoves.includes(getCellDirections(newCell, knight));
+    const isMoveValid = (knight, newCell) =>{
+        const [newX, newY] = getCellDirections(newCell, knight);
+
+        return validMoves.some(([x, y]) => x === newX && y === newY);
+    }
 
     const moveKnight = (knight, newCell) => {
         knight = newCell;
