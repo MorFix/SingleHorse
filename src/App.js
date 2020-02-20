@@ -3,7 +3,7 @@ import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
 import blue from '@material-ui/core/colors/blue';
 import grey from '@material-ui/core/colors/grey';
 
-import {Board} from './Components/Board/Board';
+import {Game} from './Components/Game/Game';
 
 import './App.css';
 
@@ -18,7 +18,7 @@ function App() {
   return (
     <div className="App">
       <ThemeProvider theme={theme}>
-        <Board></Board>
+        <Game />
       </ThemeProvider>
     </div>
   );
