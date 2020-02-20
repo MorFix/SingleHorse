@@ -27,13 +27,18 @@ export const Board = () => {
         const isEnabled = game.isMoveValid({x: knightPlace.x, y: knightPlace.y}, {x: rowIndex, y: cellIndex});
         const item = knightPlace.x === rowIndex && knightPlace.y === cellIndex ? {} : null;
 
-        return <Cell onClick={moveKnight} classes={cellIndex % 2 === rowIndex % 2 ? 'grey' : 'greyer'} enabled={isEnabled} item={item}></Cell>;
+        return <Cell key={cellIndex}
+                     onClick={() => moveKnight({x: knightPlace.x, y: knightPlace.y})} 
+                     classes={cellIndex % 2 === rowIndex % 2 ? 'grey' : 'greyer'} 
+                     enabled={isEnabled} 
+                     item={item}>
+                </Cell>;
     });
 
     return (
         <div>
             {game.board.cells.map((row, rowIndex) =>
-            <Grid container direction="column-reverse" justify="center" alignItems="center">
+            <Grid container key={rowIndex} direction="column-reverse" justify="center" alignItems="center">
                 <Row>
                     {getCells(row, rowIndex)}
                 </Row>
