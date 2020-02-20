@@ -17,7 +17,7 @@ export default () => {
     const board = createBoard();
 
     const getCellDirections = ({x: newX ,y: newY} ,{x: knightX ,y: knightY}) => 
-        [knightX - newX, knightY - newY];
+        [newX - knightX, newY - knightY];
 
     const isMoveValid = (knight, {x, y}) =>{
         if (!knight) {
