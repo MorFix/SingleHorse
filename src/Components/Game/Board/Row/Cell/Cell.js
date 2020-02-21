@@ -1,8 +1,6 @@
 import React from 'react';
 import {Paper, Grid} from '@material-ui/core';
 
-import {Knight} from '../../Knight/Knight';
-
 import './Cell.css';
 
 export const Cell = ({children, classes, enabled}) => {
@@ -15,4 +13,4 @@ export const Cell = ({children, classes, enabled}) => {
                 </Grid>
             </Paper>
     );
-}
+};

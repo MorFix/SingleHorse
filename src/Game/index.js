@@ -1,88 +1,101 @@
-import _ from 'lodash';
+import {range} from 'lodash';
 
-import validMoves from './moves';
+import possibleDirections from './directions';
 
-const sliceHeight = 4;
-const sliceWidth = 2;
-const knightXMoveSize = 1;
-const knightYMoveSize = 2;
+const createBoard = (height, width) => {
+    const {isValid, message} = validateDimensions(height, width);
+    if (!isValid) {
+        throw new Error(message);
+    }
 
-const createBoard = (width = 8, height = 8) => ({
-    cells : _.range(width).map(x => _.range(height).map(y => 
-        ({x, y, isHit: false})
-    ))
-});
+    const createCell = (rowIndex, colIndex) => ({y: rowIndex, x: colIndex, isHit: false});
 
-export default () => {
-    const board = createBoard();
+    const createRow = rowIndex => range(width).map(cellIndex => createCell(rowIndex, cellIndex));
 
-    const getCellDirections = ({x: newX ,y: newY} ,{x: knightX ,y: knightY}) => 
-        [newX - knightX, newY - knightY];
+    return {
+        cells: range(height).map(createRow)
+    };
+};
 
-    const isMoveValid = (knight, {x, y}) =>{
-        if (!knight) {
+export const validateDimensions = (height, width) => {
+    const areDividable = (!(height % 4) && !(width % 2)) ||
+						 (!(height % 2) && !(width % 4));
+    const isValid = height && width && areDividable;
+
+    return {
+        isValid,
+        message: !isValid ? `Either height or width must be dividable by 4 and 2` : ''
+    };
+};
+
+export default (height = 8, width = 8) => {
+    const board = createBoard(height, width);
+
+    const isHeightDividable = !(height % 4);
+    const sliceHeight = isHeightDividable ? 4 : 2;
+    const sliceWidth = isHeightDividable ? 2 : 4;
+
+    let knightPlace;
+
+    const getKnightPlace = () => knightPlace;
+
+    const getCellDirections = ({y: newY, x: newX}) =>
+        [newY - knightPlace.y, newX- knightPlace.x];
+
+    const isMoveValid = ({y, x}) => {
+        if (!knightPlace) {
             return true;
         }
 
-        const [newXDirection, newYDirection] = getCellDirections({x, y}, knight);
+        const [newYDirection, newXDirection] = getCellDirections({y, x});
 
-        return validMoves.some(([x, y]) => x === newXDirection && y === newYDirection) &&
-            board.cells[x] &&
-            board.cells[x][y] &&
-            !board.cells[x][y].isHit;
+        return possibleDirections.some(([y, x]) => y === newYDirection && x === newXDirection) &&
+            board.cells[y] &&
+            board.cells[y][x] &&
+            !board.cells[y][x].isHit;
     };
 
-    const markAsHit = ({x, y}) => {
-        board.cells[x][y].isHit = true;
+    const markAsHit = ({y, x}) => {
+        board.cells[y][x].isHit = true;
     };
 
-    const playTurn = (knight, newCell) => {
-        if (!isMoveValid(knight, newCell)) {
-            return knight;
+    const moveKnight = move => {
+        if (!isMoveValid(move)) {
+            return false;
         }
 
-        return calculateBestMove(newCell);
+        knightPlace = {...move};
+        markAsHit(move);
+
+        return true;
     };
 
-    const isGameOver = ({x: knightX, y: knightY}) =>
-        validMoves.map(([x,y])=> [knightX + x, knightY + y])
-        .every(([x, y]) => board.cells[x][y].isHit);
+    const getPossibleMoves = () => possibleDirections
+        .map(([y, x]) => ({y: knightPlace.y + y, x: knightPlace.x + x}));
 
-    const getSlice = ({x,y}) => ({
-        sliceX: x - x % sliceWidth,
-        sliceY: y - y % sliceHeight
+    const isGameOver = () => knightPlace && !getPossibleMoves().some(isMoveValid);
+
+    const getSlice = ({y, x}) => ({
+        y: Math.floor(y / sliceHeight),
+        x: Math.floor(x / sliceWidth)
     });
 
-    const calculateBestMove = ({x, y}) => {
-        const {sliceX, sliceY} = getSlice({x, y});
+    const getComputerMove = () => {
+        const knightSlice = getSlice(knightPlace);
 
-        const newX = x + knightXMoveSize >= sliceX + sliceWidth ? x - knightXMoveSize : x + knightXMoveSize;
-        const newY = y + knightYMoveSize >= sliceY + sliceHeight ? y - knightYMoveSize : y + knightYMoveSize;
+        return getPossibleMoves().find(move => {
+            const {x, y} = getSlice(move);
 
-        return {x: newX, y: newY};
+            return y === knightSlice.y && x === knightSlice.x;
+        });
     };
 
     return {
-        board,
-        playTurn,
-        isGameOver,
         isMoveValid,
-        markAsHit
+        moveKnight,
+        getComputerMove,
+        getKnightPlace,
+        isGameOver,
+        board
     }
 };
-
-// const getSlicedBoard = board => {
-//     const width = board.cells[0].length / sliceWidth;
-//     const height = board.cells.length / sliceHeight;
-
-//     return  _.range(width).map(x => _.range(height).map(y => 
-//         ({x: x * sliceWidth, y: y * sliceHeight})
-//     ));
-// };
-
-// const getTurn = () => {
-//     const currentTurn = turnsQueue.pop();
-//     turnsQueue.unshift(currentTurn);
-
-//     return currentTurn;
-// };

@@ -1,7 +1,7 @@
 import React from 'react';
 import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
 import blue from '@material-ui/core/colors/blue';
-import grey from '@material-ui/core/colors/grey';
+import green from '@material-ui/core/colors/green';
 
 import {Game} from './Components/Game/Game';
 
@@ -10,8 +10,8 @@ import './App.css';
 function App() {
   const theme = createMuiTheme({
     palette: {
-      primary: grey,
-      secondary: blue
+      primary: blue,
+      secondary: green
     }
   });
 
