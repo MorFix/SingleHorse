@@ -26,11 +26,9 @@ export const Board = ({children, board, onCellClick, isCellClickable, getCellBor
     return (
         <Grid container direction="column-reverse">
             {board.cells.map((row, y) =>
-            <Grid container key={y} direction="row" justify="center" alignItems="center">
                 <Row>
                     {row.map((_, x) => getCell(y, x))}
                 </Row>
-            </Grid>
             )}
         </Grid>
     );

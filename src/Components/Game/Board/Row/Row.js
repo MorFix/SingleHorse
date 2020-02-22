@@ -1,10 +1,12 @@
 import React from 'react';
-import {Grid} from '@material-ui/core';
+import {Box} from '@material-ui/core';
+
+import './Row.css';
 
 export const Row = ({children}) => {
     return (
-        <Grid container direction="row" justify="center" alignItems="center">
+        <Box className="row" display="flex" width="100%" flexDirection="row" justifyContent="center" alignItems="center">
             {children}
-        </Grid>
+        </Box>
     );
-}
+};

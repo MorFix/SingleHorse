@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import Backdrop from '@material-ui/core/Backdrop';
 import {makeStyles} from '@material-ui/core/styles';
-import {Grid, Button, Typography} from '@material-ui/core';
+import {Box, Card, Grid, Button, Typography, TextField} from '@material-ui/core';
 
 import {Board} from './Board/Board';
 import {Knight} from './Board/Knight/Knight';
@@ -101,8 +101,22 @@ export const Game = () => {
       }
     };
 
+    const boardHeightControlProps = {
+        type: 'number',
+        label: 'Board Height',
+        value: boardHeight,
+        onChange: ({target}) => setBoardHeight(Number(target.value))
+    };
+
+    const boardWidthControlProps = {
+        type: 'number',
+        label: 'Board Width',
+        value: boardWidth,
+        onChange: ({target}) => setBoardWidth(Number(target.value))
+    };
+
     return (
-        <Grid className="container" align-items="center">
+        <Grid container justify="center">
             <Backdrop className={backdropClasses.backdrop} open={gameInstance.isGameOver()}>
                 <Grid container direction="column" justify="center" alignItems="center">
                     <Typography variant="h2">
@@ -114,56 +128,61 @@ export const Game = () => {
                 </Grid>
             </Backdrop>
 
-            <Grid className="controls" align-items="center">
-                <Typography variant="h4" color="primary">Options</Typography>
-                <Grid container className="inputs" direction="column">
-                    <Grid container direction="row" justify="space-between">
-                        <Typography>Board Height</Typography>
-                        <input type="number" value={boardHeight} onChange={({target}) => setBoardHeight(Number(target.value))}/>
-                    </Grid>
-                    <Grid container direction="row" justify="space-between">
-                        <Typography>Board Width</Typography>
-                        <input type="number" value={boardWidth} onChange={({target}) => setBoardWidth(Number(target.value))}/>
-                    </Grid>
-                </Grid>
-                <Grid container direction="column" justify="center" alignItems="center">
-                    <Button className="button" variant="contained" color="secondary" onClick={changeBoardDimensions}>
-                        Change
-                    </Button>
-                    <Button className="button" variant="contained" color="secondary" onClick={() => setIsBorderHidden(!isBorderHidden)}>
-                        {isBorderHidden ? 'Show Borders' : 'Hide borders'}
-                    </Button>
-                    <Button className="button" variant="contained" color="primary" onClick={resetGame}>
-                        Restart Game
-                    </Button>
-                </Grid>
-                {dimensionsError ? <Typography className="red">{dimensionsError}</Typography> : ''}
-            </Grid>
-
-            <Grid className="game" align-items="center">
-                <Typography variant="h3" color="primary">
-                    The Single Knight
-                </Typography>
-
-                {
-                    isComputerTurn ?
-                        <Typography variant="subtitle1" className="red">
-                            Computer is thinking..
+            <Box>
+                <Grid container direction="row-reverse" justify="center" alignItems="center" className="container">
+                    <Box>
+                        <Typography variant="h3" color="primary">
+                            The Single Knight
                         </Typography>
-                        :
-                        <Typography variant="subtitle1" color="secondary">
-                            It's your turn. Place the knight on a valid cell in the board.
-                        </Typography>
-                }
 
-                <Board board={board}
-                       isCellClickable={cell => !isComputerTurn && gameInstance.isMoveValid(cell)}
-                       onCellClick={playTurn}
-                       getCellBorders={getCellBorders}
-                       isContentInCell={isKnightInCell}>
-                    <Knight/>
-                </Board>
-            </Grid>
+                        {
+                            isComputerTurn ?
+                                <Typography variant="subtitle1" className="red">
+                                    Computer is thinking..
+                                </Typography>
+                                :
+                                <Typography variant="subtitle1" color="secondary">
+                                    It's your turn. Place the knight on a valid cell in the board.
+                                </Typography>
+                        }
+
+                        <Board board={board}
+                               isCellClickable={cell => !isComputerTurn && gameInstance.isMoveValid(cell)}
+                               onCellClick={playTurn}
+                               getCellBorders={getCellBorders}
+                               isContentInCell={isKnightInCell}>
+                            <Knight/>
+                        </Board>
+                    </Box>
+
+                    <Card className="controls" variant="outlined">
+                        <Grid container direction="column" justify="center" align-items="center">
+                            <Typography variant="h4" color="primary">Options</Typography>
+                            <Grid container className="inputs" direction="column">
+                                <TextField {...boardHeightControlProps}/>
+                                <TextField {...boardWidthControlProps}/>
+                            </Grid>
+                            <Grid container direction="column" justify="center" alignItems="center">
+                                <Button className="button" variant="contained" color="secondary" onClick={changeBoardDimensions}>
+                                    Change
+                                </Button>
+                                <Button className="button" variant="contained" color="secondary" onClick={() => setIsBorderHidden(!isBorderHidden)}>
+                                    {isBorderHidden ? 'Show Borders' : 'Hide borders'}
+                                </Button>
+                                <Button className="button" variant="contained" color="primary" onClick={resetGame}>
+                                    Restart Game
+                                </Button>
+                            </Grid>
+                            {dimensionsError ? <Typography className="red">{dimensionsError}</Typography> : ''}
+                            <Box>
+                                <Typography variant="caption">
+                                    © Tal Mikey, Omer Dital, Mor Cohen 2019
+                                </Typography>
+                            </Box>
+                        </Grid>
+                    </Card>
+                </Grid>
+            </Box>
         </Grid>
     );
 };
