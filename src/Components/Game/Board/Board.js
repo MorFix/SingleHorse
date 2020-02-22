@@ -4,11 +4,16 @@ import {Grid} from '@material-ui/core';
 import {Row} from './Row/Row';
 import {Cell} from './Row/Cell/Cell';
 
-export const Board = ({children, board, onCellClick, isCellClickable, isContentInCell}) => {
+export const Board = ({children, board, onCellClick, isCellClickable, getCellBorders, isContentInCell}) => {
     const getCell = (y, x) => {
+        const borders = getCellBorders({y, x});
         const cellClasses = [
             y % 2 === x % 2 ? 'grey' : 'greyer',
-            board.cells[y][x].isHit ? 'stepped' : ''
+            board.cells[y][x].isHit ? 'stepped' : '',
+            borders.top ? 'border-top' : '',
+            borders.bottom ? 'border-bottom' : '',
+            borders.left ? 'border-left' : '',
+            borders.right ? 'border-right' : '',
         ];
 
         return <div onClick={() => onCellClick({y, x})} key={`[${y}][${x}]`}>

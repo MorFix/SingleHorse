@@ -27,6 +27,7 @@ export const Game = () => {
     const [boardWidth, setBoardWidth] = useState(gameInstance.board.cells[0].length);
     const [knightPlace, setKnightPlace] = useState(gameInstance.getKnightPlace());
     const [isComputerTurn, setIsComputerTurn] = useState(false);
+    const [isBorderHidden, setIsBorderHidden] = useState(false);
 
     const resetGame = (boardHeight, boardWidth) => {
         const {isValid} = validateDimensions(boardHeight, boardWidth);
@@ -85,22 +86,35 @@ export const Game = () => {
         return knight && equalPlaces(knight, cell);
     };
 
+    const getCellBorders = cell => {
+      if (isBorderHidden) {
+          return false;
+      }
+
+      const borders = gameInstance.getSlices();
+
+      return {
+          top: !((cell.y + 1) % borders.y),
+          bottom: !cell.y,
+          right: !((cell.x + 1) % borders.x),
+          left: !cell.x
+      }
+    };
+
     return (
-        <Grid className="container" justify="center" align-items="center">
+        <Grid className="container" align-items="center">
             <Backdrop className={backdropClasses.backdrop} open={gameInstance.isGameOver()}>
                 <Grid container direction="column" justify="center" alignItems="center">
-                    <p>
-                        <Typography variant="h2">
-                            Game Over!
-                        </Typography>
-                    </p>
+                    <Typography variant="h2">
+                        Game Over!
+                    </Typography>
                     <Button variant="contained" color="primary" onClick={resetGame}>
                         Play Again
                     </Button>
                 </Grid>
             </Backdrop>
 
-            <Grid className="controls" justify="center" align-items="center">
+            <Grid className="controls" align-items="center">
                 <Typography variant="h4" color="primary">Options</Typography>
                 <Grid container className="inputs" direction="column">
                     <Grid container direction="row" justify="space-between">
@@ -116,6 +130,9 @@ export const Game = () => {
                     <Button className="button" variant="contained" color="secondary" onClick={changeBoardDimensions}>
                         Change
                     </Button>
+                    <Button className="button" variant="contained" color="secondary" onClick={() => setIsBorderHidden(!isBorderHidden)}>
+                        {isBorderHidden ? 'Show Borders' : 'Hide borders'}
+                    </Button>
                     <Button className="button" variant="contained" color="primary" onClick={resetGame}>
                         Restart Game
                     </Button>
@@ -123,27 +140,26 @@ export const Game = () => {
                 {dimensionsError ? <Typography className="red">{dimensionsError}</Typography> : ''}
             </Grid>
 
-            <Grid className="game" direction="column" justify="flex-start" align-items="center">
+            <Grid className="game" align-items="center">
                 <Typography variant="h3" color="primary">
                     The Single Knight
                 </Typography>
 
-                <p>
-                    {
-                        isComputerTurn ?
-                            <Typography className="red">
-                                Computer is thinking..
-                            </Typography>
-                            :
-                            <Typography color="secondary">
-                                It's your turn. Place the knight on a valid cell in the board.
-                            </Typography>
-                    }
-                </p>
+                {
+                    isComputerTurn ?
+                        <Typography variant="subtitle1" className="red">
+                            Computer is thinking..
+                        </Typography>
+                        :
+                        <Typography variant="subtitle1" color="secondary">
+                            It's your turn. Place the knight on a valid cell in the board.
+                        </Typography>
+                }
 
                 <Board board={board}
                        isCellClickable={cell => !isComputerTurn && gameInstance.isMoveValid(cell)}
                        onCellClick={playTurn}
+                       getCellBorders={getCellBorders}
                        isContentInCell={isKnightInCell}>
                     <Knight/>
                 </Board>

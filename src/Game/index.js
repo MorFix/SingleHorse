@@ -73,7 +73,7 @@ export default (height = 8, width = 8) => {
     const getPossibleMoves = () => possibleDirections
         .map(([y, x]) => ({y: knightPlace.y + y, x: knightPlace.x + x}));
 
-    const isGameOver = () => knightPlace && !getPossibleMoves().some(isMoveValid);
+    const isGameOver = () => !!knightPlace && !getPossibleMoves().some(isMoveValid);
 
     const getSlice = ({y, x}) => ({
         y: Math.floor(y / sliceHeight),
@@ -90,12 +90,18 @@ export default (height = 8, width = 8) => {
         });
     };
 
+    const getSlices = () => ({
+        y: sliceHeight,
+        x: sliceWidth
+    });
+
     return {
         isMoveValid,
         moveKnight,
         getComputerMove,
         getKnightPlace,
         isGameOver,
+        getSlices,
         board
     }
 };
