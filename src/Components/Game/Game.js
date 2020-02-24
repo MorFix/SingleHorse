@@ -27,7 +27,7 @@ export const Game = () => {
     const [boardWidth, setBoardWidth] = useState(gameInstance.board.cells[0].length);
     const [knightPlace, setKnightPlace] = useState(gameInstance.getKnightPlace());
     const [isComputerTurn, setIsComputerTurn] = useState(false);
-    const [isBorderHidden, setIsBorderHidden] = useState(false);
+    const [isBorderHidden, setIsBorderHidden] = useState(true);
 
     const resetGame = (boardHeight, boardWidth) => {
         const {isValid} = validateDimensions(boardHeight, boardWidth);
@@ -176,7 +176,7 @@ export const Game = () => {
                             {dimensionsError ? <Typography className="red">{dimensionsError}</Typography> : ''}
                             <Box>
                                 <Typography variant="caption">
-                                    © Tal Mikey, Omer Dital, Mor Cohen 2019
+                                    © Tal Mikey, Omer Dital, Mor Cohen 2020
                                 </Typography>
                             </Box>
                         </Grid>

@@ -20,11 +20,11 @@ const createBoard = (height, width) => {
 export const validateDimensions = (height, width) => {
     const areDividable = (!(height % 4) && !(width % 2)) ||
 						 (!(height % 2) && !(width % 4));
-    const isValid = height && width && areDividable;
+    const isValid = height && height <= 32 && width && width <= 32 && areDividable ;
 
     return {
         isValid,
-        message: !isValid ? `Either height or width must be dividable by 4 and 2` : ''
+        message: !isValid ? `Either height or width must be dividable by 4 and 2 (LIMIT: 32)` : ''
     };
 };
 
